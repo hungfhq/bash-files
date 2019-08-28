@@ -1,0 +1,115 @@
+# 1
+scp -r initial_setup.sh root@erp-dev.nghiaphatfurniture.vn:/root
+ssh root@erp-dev.nghiaphatfurniture.vn
+
+# 2 - on server
+cd /root
+chmod u+x initial_setup.sh
+bash initial_setup.sh
+# 2.1 change mradmin pass
+su mradmin
+# enter root passwd
+logout
+
+# 3
+scp -r lamp.sh mradmin@erp-dev.nghiaphatfurniture.vn:~/
+scp -r composer_install.sh mradmin@erp-dev.nghiaphatfurniture.vn:~/
+ssh mradmin@erp-dev.nghiaphatfurniture.vn
+
+# 4 on server
+cd ~
+chmod u+x lamp.sh
+chmod u+x composer_install.sh
+bash lamp.sh
+bash composer_install.sh
+
+
+ssh root@erp-dev.nghiaphatfurniture.vn
+
+ssh admino@erp-dev.nghiaphatfurniture.vn
+
+ssh admino@167.71.210.163
+
+sudo mkdir -p /var/www/html/
+sudo chown -R $USER:$USER /var/www/html/erp/dist
+sudo chmod -R 755 /var/www/html/erp/dist
+sudo chmod -R 755 /root/test-erp.git
+
+sudo chown -R $USER:$USER ~/.ssh
+sudo chmod -R 755 ~/.ssh
+
+sudo chown -R www-data:www-data ~/.ssh
+sudo chown -R www-data:www-data /var/www/html/erp/dist
+sudo chown -R www-data:www-data /var/www/html/test-erp.git
+
+sudo chown -R daemon ~/.ssh
+sudo chown -R daemon /var/www/html/erp/dist
+sudo chown -R daemon /root/test-erp.git
+
+sudo chown -R root ~/.ssh
+sudo chown -R root /var/www/html/erp/dist
+sudo chown -R root /root/test-erp.git
+
+sudo chown -R $USER:$USER ~/.ssh
+sudo chown -R $USER:$USER /var/www/html/erp/dist
+sudo chown -R $USER:$USER /root/test-erp.git
+
+sudo mkdir /var/www/html/deployer
+
+sudo nano /etc/apache2/sites-available/erp-dev.nghiaphatfurniture.vn.conf
+
+<VirtualHost *:80>
+    ServerAdmin admin@erp-dev.nghiaphatfurniture.vn
+    ServerName erp-dev.nghiaphatfurniture.vn
+    ServerAlias www.erp-dev.nghiaphatfurniture.vn
+    DocumentRoot /var/www/erp-dev.nghiaphatfurniture.vn/erp/dist
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+sudo a2ensite erp-dev.nghiaphatfurniture.vn.conf
+
+sudo a2dissite 000-default.conf
+
+
+sudo apache2ctl configtest
+
+
+
+scp -r * root@erp-dev.nghiaphatfurniture.vn:/var/www/html/erp/dist
+
+scp -r * root@erp-dev.nghiaphatfurniture.vn:/var/www/html/erp-api/app/Observers
+
+scp -r * admino@erp-dev.nghiaphatfurniture.vn:~/
+
+
+CREATE SCHEMA `erp` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+
+sudo mkdir /var/www/erp-dev-api.nghiaphatfurniture.vn
+
+sudo nano /etc/apache2/sites-available/erp-dev-api.nghiaphatfurniture.vn.conf
+
+<VirtualHost *:80>
+    ServerAdmin admin@erp-dev-api.nghiaphatfurniture.vn
+    ServerName erp-dev-api.nghiaphatfurniture.vn
+    ServerAlias erp-dev-api.nghiaphatfurniture.vn
+    DocumentRoot /var/www/erp-api/public
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+
+cp -Rf erp-api /var/www/html
+
+sudo systemctl restart apache2
+
+
+cat ~/.ssh/id_rsa.pub 
+
+git clone —mirror git@bitbucket.org:bangvndng/erp.git
+
+git clone --mirror git@bitbucket.org:hungfhq-bb/test-erp.git
+
+GIT_WORK_TREE=/var/www/html/erp/dist git checkout -f master
+
+php /var/www/html/erp/dist/deploy.php
